@@ -5,6 +5,9 @@ from datetime import datetime
 import os
 import math
 import RPi.GPIO as GPIO
+import json
+import urllib
+import subprocess
 from smbus import SMBus
 from PyComms import hmc5883l
 from PyComms import mpu6050
@@ -236,17 +239,44 @@ def read_ultrasonic():
 
 	return return_text
 
-while True:
-	print read_ultrasonic()
+# Latitude, Longitude
+work = (41.882217, -87.641367)
+home = (41.882217, -87.641367)
 
-	print "Pot: ", readPCFpot()
-	print "Temp: ", readPCFtemp()
-	print "Light: ", readPCFlight()
+#### End of config
 
-	print "Temperature: ", readTemperature()
-	print "Vibration: ", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-	print "Sound: ", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-	print readHMC5883L()
-	print readMPU6050()
 
-	time.sleep(0.25)
+def get_coords():
+	"""Return (latitude, longitude)"""
+	user_id = '6804104044807221644'
+	url = 'http://www.google.com/latitude/apps/badge/api?user=%s&type=json' % user_id
+	content = urllib.urlopen(url)
+
+	try:
+		data = json.load(content)
+		coords = data['features'][0]['geometry']['coordinates']
+		return coords[1], coords[0]
+
+	finally:
+		content.close()
+
+def main():
+	while True:
+		print "Distance: ", read_ultrasonic()
+		print "Location: ", get_coords()
+
+		print "Pot: ", readPCFpot()
+		print "Temp: ", readPCFtemp()
+		print "Light: ", readPCFlight()
+
+		print "Temperature: ", readTemperature()
+		print "Vibration: ", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS)
+		print "Sound: ", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
+		print readHMC5883L()
+		print readMPU6050()
+
+		time.sleep(0.25)
+
+if __name__ == '__main__':
+    main()
+
