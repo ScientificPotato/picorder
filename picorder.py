@@ -11,6 +11,7 @@ import subprocess
 from smbus import SMBus
 from PyComms import hmc5883l
 from PyComms import mpu6050
+from HD44780 import HD44780
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -36,10 +37,14 @@ us_echo_pin=22
 GPIO.setup(us_trigger_pin, GPIO.OUT)
 GPIO.setup(us_echo_pin, GPIO.IN)
 
+PIN_SWITCH=17
+GPIO.setup(PIN_SWITCH, GPIO.IN)
+
 # Define analog pins
 PIN_TEMP=0
 PIN_VIBR=1
 PIN_MICR=2
+PIN_HUMD=3
 
 # Using i2c channel 1 - for Rev 1 Pis, change to 0
 bus = SMBus(1)
@@ -48,9 +53,9 @@ bus = SMBus(1)
 mag = hmc5883l.HMC5883L()
 mag.initialize()
 
-mpu = mpu6050.MPU6050()
-mpu.dmpInitialize()
-mpu.setDMPEnabled(True)
+#mpu = mpu6050.MPU6050()
+#mpu.dmpInitialize()
+#mpu.setDMPEnabled(True)
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
@@ -94,11 +99,16 @@ def readTemperature():
 
 	return tC
 
+def readHumidity():
+	raw=readadc(PIN_HUMD, SPICLK, SPIMOSI, SPIMISO, SPICS)
+	return raw
+
 def readPCFchannel(channel):
 	bus.write_byte(0x48, channel)
 	# discard first value - it's the previous reading
 	bus.read_byte(0x48)
 	reading = bus.read_byte(0x48)
+
 	return reading
 
 def readPCFpot():
@@ -239,20 +249,15 @@ def read_ultrasonic():
 
 	return return_text
 
-# Latitude, Longitude
-work = (41.882217, -87.641367)
-home = (41.882217, -87.641367)
-
-#### End of config
 
 
 def get_coords():
 	"""Return (latitude, longitude)"""
 	user_id = '6804104044807221644'
 	url = 'http://www.google.com/latitude/apps/badge/api?user=%s&type=json' % user_id
-	content = urllib.urlopen(url)
 
 	try:
+		content = urllib.urlopen(url)
 		data = json.load(content)
 		coords = data['features'][0]['geometry']['coordinates']
 		return coords[1], coords[0]
@@ -260,20 +265,27 @@ def get_coords():
 	finally:
 		content.close()
 
+
+
+
 def main():
+	exit(0)
+
 	while True:
+		switch = GPIO.input(PIN_SWITCH)
 		print "Distance: ", read_ultrasonic()
 		print "Location: ", get_coords()
 
 		print "Pot: ", readPCFpot()
 		print "Temp: ", readPCFtemp()
+		print "Humidity: ", readHumidity()
 		print "Light: ", readPCFlight()
 
 		print "Temperature: ", readTemperature()
 		print "Vibration: ", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS)
 		print "Sound: ", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-		print readHMC5883L()
-		print readMPU6050()
+		print "HMC: ", readHMC5883L()
+		print "MPU: ", readMPU6050()
 
 		time.sleep(0.25)
 
