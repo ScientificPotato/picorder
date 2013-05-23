@@ -53,9 +53,9 @@ bus = SMBus(1)
 mag = hmc5883l.HMC5883L()
 mag.initialize()
 
-#mpu = mpu6050.MPU6050()
-#mpu.dmpInitialize()
-#mpu.setDMPEnabled(True)
+mpu = mpu6050.MPU6050()
+mpu.dmpInitialize()
+mpu.setDMPEnabled(True)
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
@@ -269,10 +269,9 @@ def get_coords():
 
 
 def main():
-	exit(0)
-
 	while True:
 		switch = GPIO.input(PIN_SWITCH)
+		print "Switch: ", switch
 		print "Distance: ", read_ultrasonic()
 		print "Location: ", get_coords()
 
