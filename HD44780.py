@@ -2,6 +2,9 @@
 
 import RPi.GPIO as GPIO
 import time
+
+DEBUG=False
+
 class HD44780:
 
 	def __init__(self, pin_rs=7, pin_e=8, pins_db=[25, 24, 23, 18]):
@@ -61,11 +64,20 @@ class HD44780:
 	def message(self, text):
 		""" Send string to LCD. Newline wraps to second line"""
 
+		if DEBUG:
+			print "-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+
 		for char in text:
 			if char == '\n':
+				if DEBUG:
+					print "Newline"
 				self.cmd(0xC0) # next line
 			else:
+				if DEBUG:
+					print char
 				self.cmd(ord(char),True)
+		if DEBUG:
+			print "-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 
 if __name__ == '__main__':
 	lcd = HD44780()

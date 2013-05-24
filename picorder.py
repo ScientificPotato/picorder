@@ -3,6 +3,8 @@
 import time
 from datetime import datetime
 import os
+import socket
+import commands
 import math
 import RPi.GPIO as GPIO
 import json
@@ -11,12 +13,13 @@ import subprocess
 from smbus import SMBus
 from PyComms import hmc5883l
 from PyComms import mpu6050
-from HD44780 import HD44780
+import HD44780
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 DEBUG=1
 LOGGER=1
+
 
 # Set-up SPI for analog reading 
 # change these as desired - they're the pins connected from the
@@ -56,6 +59,19 @@ mag.initialize()
 mpu = mpu6050.MPU6050()
 mpu.dmpInitialize()
 mpu.setDMPEnabled(True)
+
+LCD=HD44780.HD44780()
+
+
+def readIPaddresses():
+        ips = commands.getoutput("/sbin/ifconfig | grep -i \"inet\" | grep -iv \"inet6\" | " + "awk {'print $2'} | sed -ne 's/addr\:/ /p'")
+        addrs = ips.split('\n')
+
+	return addrs
+
+def readHostname():
+	local_hostname=socket.gethostname()
+	return local_hostname
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
@@ -123,8 +139,11 @@ def readPCFlight():
 
 def readHMC5883L():
 	data = mag.getHeading()
+	reading = {}
+	reading['yaw'] = "%.0f" % data['z']
+	reading['pitch'] = "%.0f" % data['y']
+	reading['roll'] = "%.0f" % data['x']
 
-	reading = [data['x'],data['y'],data['z']]
 	return reading
 
 def readMPU6050():
@@ -159,9 +178,9 @@ def readMPU6050():
 			ypr = mpu.dmpGetYawPitchRoll(q, g)
 
 			reading = {}
-			reading['yaw'] = ypr['yaw'] * 180 / math.pi
-			reading['pitch'] = ypr['pitch'] * 180 / math.pi
-			reading['roll'] = ypr['roll'] * 180 / math.pi
+			reading['yaw'] = "%.2f" % (ypr['yaw'] * 180 / math.pi)
+			reading['pitch'] = "%.2f" % (ypr['pitch'] * 180 / math.pi)
+			reading['roll'] = "%.2f" % (ypr['roll'] * 180 / math.pi)
 	
 			# track FIFO count here in case there is > 1 packet available
 			# (this lets us immediately read more without waiting for an interrupt)
@@ -266,27 +285,95 @@ def get_coords():
 		content.close()
 
 
+def readSwitch(PIN):
+	reading = GPIO.input(PIN)
+	if (reading == 1):
+		reading = 0
+	else:
+		reading = 1
+	return reading
 
+def lcdMessage(top, bottom):
+	LCD.clear()
+	time.sleep(0.1)
+	LCD.message(" ")
+	time.sleep(0.1)
+	msg = str(top) + "\n" + str(bottom)
+	LCD.message(msg)
 
 def main():
+	lcdMessage("-= Picorder v2 =-", "Starting up...")
+	time.sleep(1)
+
+	operation = 0
+	max_operation = 11
 	while True:
-		switch = GPIO.input(PIN_SWITCH)
-		print "Switch: ", switch
-		print "Distance: ", read_ultrasonic()
-		print "Location: ", get_coords()
+		switch = readSwitch(PIN_SWITCH)
+		if (switch == 1):
+			if (operation == max_operation):
+				operation = 0
+			else:
+				operation = operation + 1
 
-		print "Pot: ", readPCFpot()
-		print "Temp: ", readPCFtemp()
-		print "Humidity: ", readHumidity()
-		print "Light: ", readPCFlight()
+		if operation == 0:
+			hostname=readHostname()
+			for addr in readIPaddresses():
+				lcdMessage(hostname, addr)
+				time.sleep(1)
 
-		print "Temperature: ", readTemperature()
-		print "Vibration: ", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-		print "Sound: ", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-		print "HMC: ", readHMC5883L()
-		print "MPU: ", readMPU6050()
+		elif operation == 1:
+			coords= get_coords()
+			lcdMessage("Latitude", coords[0])
+			time.sleep(2)
+			lcdMessage("Longitude", coords[1])
+			time.sleep(5)
 
-		time.sleep(0.25)
+		elif operation == 2:
+			lcdMessage("Potentiometer", readPCFpot())
+			time.sleep(0.2)
+
+		elif operation == 3:
+			lcdMessage("Temperature (PCF)", readPCFtemp())
+			time.sleep(0.2)
+
+		elif operation == 4:
+			lcdMessage("Humidity*", readHumidity())
+			time.sleep(0.2)
+
+		elif operation == 5:
+			lcdMessage("Light*", readPCFlight())
+			time.sleep(0.2)
+
+		elif operation == 6:
+			lcdMessage("Vibration*", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS))
+			time.sleep(0.2)
+
+		elif operation == 7:
+			lcdMessage("Sound*", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS))
+			time.sleep(0.2)
+
+		elif operation == 8:
+			ypr = readHMC5883L()
+			short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
+			short_version_bot = "r:" + ypr['roll']
+			lcdMessage(short_version_top, short_version_bot)
+			time.sleep(0.2)
+
+		elif operation == 9:
+			ypr = readMPU6050()
+			short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
+			short_version_bot = "r:" + ypr['roll']
+			lcdMessage(short_version_top, short_version_bot)
+			time.sleep(0.2)
+
+		elif operation == 10:
+			lcdMessage("Reading distance", ".........")
+			lcdMessage("Distance", read_ultrasonic())
+			time.sleep(2)
+
+		elif operation == 11:
+			lcdMessage("Temperature", readTemperature())
+			time.sleep(0.2)
 
 if __name__ == '__main__':
     main()
