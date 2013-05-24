@@ -15,6 +15,8 @@ from PyComms import hmc5883l
 from PyComms import mpu6050
 import HD44780
 
+print "Using RPi.GPIO version " + GPIO.VERSION
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 DEBUG=1
@@ -41,7 +43,10 @@ GPIO.setup(us_trigger_pin, GPIO.OUT)
 GPIO.setup(us_echo_pin, GPIO.IN)
 
 PIN_SWITCH=17
-GPIO.setup(PIN_SWITCH, GPIO.IN)
+GPIO.setup(PIN_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+
 
 # Define analog pins
 PIN_TEMP=0
@@ -301,79 +306,96 @@ def lcdMessage(top, bottom):
 	msg = str(top) + "\n" + str(bottom)
 	LCD.message(msg)
 
+operation = 0
+max_operation = 11
+time_stamp = time.time()
+
+def buttonPressAction(channel):
+	global time_stamp
+	global operation
+	global max_operation
+	time_now = time.time()
+	if (time_now - time_stamp) >= 0.3:
+		if (operation == max_operation):
+			operation = 0
+		else:
+			operation = operation + 1
+
+		time_stamp = time_now
+		print "Next!"
+
 def main():
-	lcdMessage("-= Picorder v2 =-", "Starting up...")
+	lcdMessage("= Picorder v2 =", "Starting up...")
 	time.sleep(1)
 
-	operation = 0
-	max_operation = 11
+	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=buttonPressAction)
+
 	while True:
-		switch = readSwitch(PIN_SWITCH)
-		if (switch == 1):
-			if (operation == max_operation):
-				operation = 0
-			else:
-				operation = operation + 1
+		try:
+			if operation == 0:
+				hostname=readHostname()
+				for addr in readIPaddresses():
+					lcdMessage(hostname, addr)
+					time.sleep(1)
+	
+			elif operation == 1:
+				coords= get_coords()
+				lcdMessage("Latitude", coords[0])
+				time.sleep(2)
+				lcdMessage("Longitude", coords[1])
+				time.sleep(5)
+	
+			elif operation == 2:
+				lcdMessage("Potentiometer", readPCFpot())
+				time.sleep(0.2)
+	
+			elif operation == 3:
+				lcdMessage("Temperature (PCF)", readPCFtemp())
+				time.sleep(0.2)
+	
+			elif operation == 4:
+				lcdMessage("Humidity*", readHumidity())
+				time.sleep(0.2)
+	
+			elif operation == 5:
+				lcdMessage("Light*", readPCFlight())
+				time.sleep(0.2)
+	
+			elif operation == 6:
+				lcdMessage("Vibration*", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS))
+				time.sleep(0.2)
+	
+			elif operation == 7:
+				lcdMessage("Sound*", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS))
+				time.sleep(0.2)
+	
+			elif operation == 8:
+				ypr = readHMC5883L()
+				short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
+				short_version_bot = "r:" + ypr['roll']
+				lcdMessage(short_version_top, short_version_bot)
+				time.sleep(0.2)
+	
+			elif operation == 9:
+				ypr = readMPU6050()
+				short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
+				short_version_bot = "r:" + ypr['roll']
+				lcdMessage(short_version_top, short_version_bot)
+				time.sleep(0.2)
+	
+			elif operation == 10:
+				lcdMessage("Reading distance", ".........")
+				lcdMessage("Distance", read_ultrasonic())
+				time.sleep(2)
+	
+			elif operation == 11:
+				lcdMessage("Temperature", readTemperature())
+				time.sleep(0.2)
 
-		if operation == 0:
-			hostname=readHostname()
-			for addr in readIPaddresses():
-				lcdMessage(hostname, addr)
-				time.sleep(1)
+		except KeyboardInterrupt:
+			GPIO.cleanup()
 
-		elif operation == 1:
-			coords= get_coords()
-			lcdMessage("Latitude", coords[0])
-			time.sleep(2)
-			lcdMessage("Longitude", coords[1])
-			time.sleep(5)
-
-		elif operation == 2:
-			lcdMessage("Potentiometer", readPCFpot())
-			time.sleep(0.2)
-
-		elif operation == 3:
-			lcdMessage("Temperature (PCF)", readPCFtemp())
-			time.sleep(0.2)
-
-		elif operation == 4:
-			lcdMessage("Humidity*", readHumidity())
-			time.sleep(0.2)
-
-		elif operation == 5:
-			lcdMessage("Light*", readPCFlight())
-			time.sleep(0.2)
-
-		elif operation == 6:
-			lcdMessage("Vibration*", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS))
-			time.sleep(0.2)
-
-		elif operation == 7:
-			lcdMessage("Sound*", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS))
-			time.sleep(0.2)
-
-		elif operation == 8:
-			ypr = readHMC5883L()
-			short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
-			short_version_bot = "r:" + ypr['roll']
-			lcdMessage(short_version_top, short_version_bot)
-			time.sleep(0.2)
-
-		elif operation == 9:
-			ypr = readMPU6050()
-			short_version_top = "y:" + ypr['yaw'] + " p:" + ypr['pitch']
-			short_version_bot = "r:" + ypr['roll']
-			lcdMessage(short_version_top, short_version_bot)
-			time.sleep(0.2)
-
-		elif operation == 10:
-			lcdMessage("Reading distance", ".........")
-			lcdMessage("Distance", read_ultrasonic())
-			time.sleep(2)
-
-		elif operation == 11:
-			lcdMessage("Temperature", readTemperature())
-			time.sleep(0.2)
+	GPIO.cleanup()
 
 if __name__ == '__main__':
     main()
