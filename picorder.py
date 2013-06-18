@@ -277,6 +277,9 @@ def read_ultrasonic():
 
 def get_coords():
 	"""Return (latitude, longitude)"""
+	coords = [0,0]
+	return coords
+
 	user_id = '6804104044807221644'
 	url = 'http://www.google.com/latitude/apps/badge/api?user=%s&type=json' % user_id
 
@@ -299,6 +302,10 @@ def readSwitch(PIN):
 	return reading
 
 def lcdMessage(top, bottom):
+	if DEBUG:
+		print top
+		print bottom
+
 	LCD.clear()
 	time.sleep(0.1)
 	LCD.message(" ")
