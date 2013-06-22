@@ -14,6 +14,8 @@ from smbus import SMBus
 from PyComms import hmc5883l
 from PyComms import mpu6050
 import HD44780
+from gps import *
+import threading
 
 print "Using RPi.GPIO version " + GPIO.VERSION
 
@@ -66,6 +68,15 @@ mpu.dmpInitialize()
 mpu.setDMPEnabled(True)
 
 LCD=HD44780.HD44780()
+
+print "Starting up GPS"
+os.system('./enable_gps.sh')
+time.sleep(3)
+gpsd = None
+
+
+
+
 
 
 def readIPaddresses():
@@ -139,7 +150,9 @@ def readPCFtemp():
 	return readPCFchannel(2)
 
 def readPCFlight():
-	return readPCFchannel(3)
+	raw = readPCFchannel(3)
+	reading = 255 - raw
+	return reading
 
 
 def readHMC5883L():
@@ -276,22 +289,15 @@ def read_ultrasonic():
 
 
 def get_coords():
-	"""Return (latitude, longitude)"""
-	coords = [0,0]
-	return coords
-
-	user_id = '6804104044807221644'
-	url = 'http://www.google.com/latitude/apps/badge/api?user=%s&type=json' % user_id
+	"""Return (latitude, longitude, utc, altitude)"""
 
 	try:
-		content = urllib.urlopen(url)
-		data = json.load(content)
-		coords = data['features'][0]['geometry']['coordinates']
-		return coords[1], coords[0]
+		coords = [gpsd.fix.latitude, gpsd.fix.longitude, gpsd.utc, "%s metres" % gpsd.fix.altitude]
 
-	finally:
-		content.close()
+	except (KeyboardInterrupt, SystemExit):
+		pass
 
+	return coords
 
 def readSwitch(PIN):
 	reading = GPIO.input(PIN)
@@ -313,7 +319,6 @@ def lcdMessage(top, bottom):
 	msg = str(top) + "\n" + str(bottom)
 	LCD.message(msg)
 
-operation = 0
 max_operation = 11
 time_stamp = time.time()
 
@@ -331,12 +336,30 @@ def buttonPressAction(channel):
 		time_stamp = time_now
 		print "Next!"
 
+class GpsPoller(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+		global gpsd #bring it in scope
+		gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
+		self.current_value = None
+		self.running = True #setting the thread running to true
+
+	def run(self):
+		global gpsd
+		while gpsp.running:
+			gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
+
+
+gpsp = GpsPoller()
 def main():
 	lcdMessage("= Picorder v2 =", "Starting up...")
 	time.sleep(1)
 
 	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=buttonPressAction)
 
+	gpsp.start()
+
+	operation = 1
 	while True:
 		try:
 			if operation == 0:
@@ -350,7 +373,11 @@ def main():
 				lcdMessage("Latitude", coords[0])
 				time.sleep(2)
 				lcdMessage("Longitude", coords[1])
-				time.sleep(5)
+				time.sleep(2)
+				lcdMessage("UTC", coords[2])
+				time.sleep(2)
+				lcdMessage("Altitude", coords[3])
+				time.sleep(2)
 	
 			elif operation == 2:
 				lcdMessage("Potentiometer", readPCFpot())
@@ -400,9 +427,9 @@ def main():
 				time.sleep(0.2)
 
 		except KeyboardInterrupt:
+			gpsp.running = False
+			gpsp.join()
 			GPIO.cleanup()
-
-	GPIO.cleanup()
 
 if __name__ == '__main__':
     main()
