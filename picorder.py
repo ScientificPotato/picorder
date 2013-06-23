@@ -423,7 +423,7 @@ if __name__ == '__main__':
 	print 'Session ', sessionID
 
 	# Set to 0 for normal operation, set to other number to skip to that on boot
-	operation = 10
+	operation = 0
 
 	while True:
 		now = datetime.now()
@@ -495,7 +495,6 @@ if __name__ == '__main__':
 				time.sleep(0.2)
 	
 			elif operation == 10:
-				lcdMessage("Reading distance", ".........")
 				lcdMessage("Distance", read_ultrasonic())
 				time.sleep(0.5)
 	
