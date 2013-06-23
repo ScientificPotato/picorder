@@ -84,5 +84,8 @@ if __name__ == '__main__':
 	lcd.clear
 	time.sleep(1)
 	lcd.message("Raspberry Pi\nTake a byte!")
-	time.sleep(1)
+	time.sleep(3)
+	lcd.clear()
+	lcd.message("Raspberry Pi\n2!")
+	time.sleep(3)
 	lcd.clear()

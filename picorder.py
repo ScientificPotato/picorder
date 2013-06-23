@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import division
 import time
 from datetime import datetime
 import os
@@ -16,14 +17,13 @@ from PyComms import mpu6050
 import HD44780
 from gps import *
 import threading
+import sqlite3
 
-print "Using RPi.GPIO version " + GPIO.VERSION
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
 DEBUG=1
 LOGGER=1
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 # Set-up SPI for analog reading 
 # change these as desired - they're the pins connected from the
@@ -47,19 +47,16 @@ GPIO.setup(us_echo_pin, GPIO.IN)
 PIN_SWITCH=17
 GPIO.setup(PIN_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-
-
-
 # Define analog pins
 PIN_TEMP=0
 PIN_VIBR=1
 PIN_MICR=2
 PIN_HUMD=3
 
+# Sensor initialization
 # Using i2c channel 1 - for Rev 1 Pis, change to 0
 bus = SMBus(1)
 
-# Sensor initialization
 mag = hmc5883l.HMC5883L()
 mag.initialize()
 
@@ -69,16 +66,8 @@ mpu.setDMPEnabled(True)
 
 LCD=HD44780.HD44780()
 
-print "Starting up GPS"
-os.system('./enable_gps.sh')
-time.sleep(3)
-gpsd = None
 
-
-
-
-
-
+# FUNCTIONS TO READ SENSORS / DATA
 def readIPaddresses():
         ips = commands.getoutput("/sbin/ifconfig | grep -i \"inet\" | grep -iv \"inet6\" | " + "awk {'print $2'} | sed -ne 's/addr\:/ /p'")
         addrs = ips.split('\n')
@@ -207,8 +196,8 @@ def readMPU6050():
 			return reading
 
 def read_ultrasonic():
-	number_of_readings=5
-	number_of_samples=15
+	number_of_readings=3
+	number_of_samples=5
 	ping_timeout=200000
 	debug = False
 
@@ -292,12 +281,63 @@ def get_coords():
 	"""Return (latitude, longitude, utc, altitude)"""
 
 	try:
-		coords = [gpsd.fix.latitude, gpsd.fix.longitude, gpsd.utc, "%s metres" % gpsd.fix.altitude]
+		lat = gpsd.fix.latitude
+		lon = gpsd.fix.longitude
+		speed = gpsd.fix.speed
+		utc = gpsd.utc
+		alt = gpsd.fix.altitude
+
+		if (math.isnan(lat)):
+			lat = "No satellite fix"
+
+		if (math.isnan(lon)):
+			lon = "No satellite fix"
+
+		if (math.isnan(speed)):
+			speed = "No satellite fix"
+
+		if (utc):
+			pass
+		else:
+			utc = "No satellite fix"
+
+		if (math.isnan(alt)):
+			alt = "No reading"
+		else:
+			alt = "%s metres" % alt
+
+		coords = [lat, lon, utc, alt, speed]
 
 	except (KeyboardInterrupt, SystemExit):
 		pass
 
 	return coords
+
+def readVibration():
+	reading = readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS)
+
+	perc_of_max = float(reading / 1024) * 100
+	number_of_bars = float((16/100)) * perc_of_max
+	number_of_bars = int(math.ceil(number_of_bars))
+	#print 'Bars %s' % number_of_bars
+
+	output = '|' * number_of_bars
+
+	return output
+
+def readSoundLevel():
+	reading = readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
+
+	print reading
+
+	perc_of_max = float(reading / 255) * 100
+	number_of_bars = float((16/100)) * perc_of_max
+	number_of_bars = int(math.ceil(number_of_bars))
+	#print 'Bars %s' % number_of_bars
+
+	output = '|' * number_of_bars
+
+	return output
 
 def readSwitch(PIN):
 	reading = GPIO.input(PIN)
@@ -307,26 +347,23 @@ def readSwitch(PIN):
 		reading = 1
 	return reading
 
+
 def lcdMessage(top, bottom):
 	if DEBUG:
 		print top
 		print bottom
 
 	LCD.clear()
-	time.sleep(0.1)
-	LCD.message(" ")
-	time.sleep(0.1)
+	LCD.message('\n')
 	msg = str(top) + "\n" + str(bottom)
 	LCD.message(msg)
-
-max_operation = 11
-time_stamp = time.time()
 
 def buttonPressAction(channel):
 	global time_stamp
 	global operation
 	global max_operation
 	time_now = time.time()
+
 	if (time_now - time_stamp) >= 0.3:
 		if (operation == max_operation):
 			operation = 0
@@ -350,17 +387,49 @@ class GpsPoller(threading.Thread):
 			gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
 
-gpsp = GpsPoller()
-def main():
+def currentSession():
+	ts = time.time()
+	st = datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
+
+	return st
+
+
+
+if __name__ == '__main__':
+	operation = 0
+	max_operation = 11
+	time_stamp = time.time()
+
+	print "Using RPi.GPIO version " + GPIO.VERSION
+
 	lcdMessage("= Picorder v2 =", "Starting up...")
 	time.sleep(1)
 
-	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=buttonPressAction)
-
+	lcdMessage("= Picorder v2 =", "Activating GPS")
+	os.system('./enable_gps.sh')
+	time.sleep(3)
+	gpsd = None
+	gpsp = GpsPoller()
 	gpsp.start()
 
-	operation = 1
+	# Database logging
+	lcdMessage("= Picorder v2 =", "Connecting to DB")
+	conn = sqlite3.connect('picorder.db')
+	cursor = conn.cursor()
+
+	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=buttonPressAction)
+
+	sessionID = currentSession()
+	print 'Session ', sessionID
+
+	# Set to 0 for normal operation, set to other number to skip to that on boot
+	operation = 10
+
 	while True:
+		now = datetime.now()
+		curTime = str(now.hour) + ':' + str(now.minute) + ':' + str(now.second)
+
+
 		try:
 			if operation == 0:
 				hostname=readHostname()
@@ -369,7 +438,14 @@ def main():
 					time.sleep(1)
 	
 			elif operation == 1:
-				coords= get_coords()
+				coords = get_coords()
+				sqlData = coords
+				sqlData.append(0)
+				sqlData.append(sessionID)
+
+				cursor.execute("INSERT INTO gpslog (lat, lon, datetime, alt, speed, uploaded, session_id) VALUES (?,?,?,?,?,?,?);", sqlData)
+				conn.commit()
+
 				lcdMessage("Latitude", coords[0])
 				time.sleep(2)
 				lcdMessage("Longitude", coords[1])
@@ -377,6 +453,8 @@ def main():
 				lcdMessage("UTC", coords[2])
 				time.sleep(2)
 				lcdMessage("Altitude", coords[3])
+				time.sleep(2)
+				lcdMessage("Speed", coords[4])
 				time.sleep(2)
 	
 			elif operation == 2:
@@ -394,14 +472,13 @@ def main():
 			elif operation == 5:
 				lcdMessage("Light*", readPCFlight())
 				time.sleep(0.2)
-	
 			elif operation == 6:
-				lcdMessage("Vibration*", readadc(PIN_VIBR, SPICLK, SPIMOSI, SPIMISO, SPICS))
-				time.sleep(0.2)
+				lcdMessage("Vibration", readVibration())
+				time.sleep(0.25)
 	
 			elif operation == 7:
-				lcdMessage("Sound*", readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS))
-				time.sleep(0.2)
+				lcdMessage("Sound", readSoundLevel())
+				time.sleep(0.25)
 	
 			elif operation == 8:
 				ypr = readHMC5883L()
@@ -420,7 +497,7 @@ def main():
 			elif operation == 10:
 				lcdMessage("Reading distance", ".........")
 				lcdMessage("Distance", read_ultrasonic())
-				time.sleep(2)
+				time.sleep(0.5)
 	
 			elif operation == 11:
 				lcdMessage("Temperature", readTemperature())
@@ -430,7 +507,4 @@ def main():
 			gpsp.running = False
 			gpsp.join()
 			GPIO.cleanup()
-
-if __name__ == '__main__':
-    main()
 
