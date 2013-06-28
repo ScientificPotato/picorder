@@ -14,7 +14,7 @@ import subprocess
 from smbus import SMBus
 from PyComms import hmc5883l
 from PyComms import mpu6050
-import HD44780
+import MHHD44780
 from gps import *
 import threading
 import sqlite3
@@ -60,11 +60,17 @@ bus = SMBus(1)
 mag = hmc5883l.HMC5883L()
 mag.initialize()
 
-mpu = mpu6050.MPU6050()
-mpu.dmpInitialize()
-mpu.setDMPEnabled(True)
+try:
+	mpu = mpu6050.MPU6050()
+	mpu.dmpInitialize()
+	mpu.setDMPEnabled(True)
+except:
+	pass
 
-LCD=HD44780.HD44780()
+try:
+	LCD=MHHD44780.HD44780()
+except:
+	pass
 
 
 # FUNCTIONS TO READ SENSORS / DATA
@@ -80,40 +86,45 @@ def readHostname():
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
-	if ((adcnum > 7) or (adcnum < 0)):
-		return -1
-	GPIO.output(cspin, True)
-	GPIO.output(clockpin, False)  # start clock low
-	GPIO.output(cspin, False)     # bring CS low
+	try:
+		if ((adcnum > 7) or (adcnum < 0)):
+			return -1
+		GPIO.output(cspin, True)
+		GPIO.output(clockpin, False)  # start clock low
+		GPIO.output(cspin, False)     # bring CS low
+
+		commandout = adcnum
+		commandout |= 0x18  # start bit + single-ended bit
+		commandout <<= 3    # we only need to send 5 bits here
+		for i in range(5):
+			if (commandout & 0x80):
+				GPIO.output(mosipin, True)
+			else:   
+				GPIO.output(mosipin, False)
+			commandout <<= 1
+			GPIO.output(clockpin, True)
+			GPIO.output(clockpin, False)
+	 
+		adcout = 0
+		# read in one empty bit, one null bit and 10 ADC bits
+		for i in range(12):
+			GPIO.output(clockpin, True)
+			GPIO.output(clockpin, False)
+			adcout <<= 1
+			if (GPIO.input(misopin)):
+				adcout |= 0x1
+	 
+		GPIO.output(cspin, True)
  
-	commandout = adcnum
-	commandout |= 0x18  # start bit + single-ended bit
-	commandout <<= 3    # we only need to send 5 bits here
-	for i in range(5):
-		if (commandout & 0x80):
-			GPIO.output(mosipin, True)
-		else:   
-			GPIO.output(mosipin, False)
-		commandout <<= 1
-		GPIO.output(clockpin, True)
-		GPIO.output(clockpin, False)
- 
-	adcout = 0
-	# read in one empty bit, one null bit and 10 ADC bits
-	for i in range(12):
-		GPIO.output(clockpin, True)
-		GPIO.output(clockpin, False)
-		adcout <<= 1
-		if (GPIO.input(misopin)):
-			adcout |= 0x1
- 
-	GPIO.output(cspin, True)
- 
-	adcout /= 2	 #first bit is 'null' so drop it
+		adcout /= 2	 #first bit is 'null' so drop it
+
+	except:
+		adcout = 0
+
 	return adcout
 
 def readTemperature():
-	raw=readadc(PIN_TEMP, SPICLK, SPIMOSI, SPIMISO, SPICS)
+	raw = readadc(PIN_TEMP, SPICLK, SPIMOSI, SPIMISO, SPICS)
 	mv = raw * (3300.0 / 1024.0)
 	tC = ((mv-100.0) / 10.0) - 40.0
 	tF = (tC * 9.0 / 5.0) + 32
@@ -121,14 +132,18 @@ def readTemperature():
 	return tC
 
 def readHumidity():
-	raw=readadc(PIN_HUMD, SPICLK, SPIMOSI, SPIMISO, SPICS)
+	raw = readadc(PIN_HUMD, SPICLK, SPIMOSI, SPIMISO, SPICS)
 	return raw
 
 def readPCFchannel(channel):
-	bus.write_byte(0x48, channel)
-	# discard first value - it's the previous reading
-	bus.read_byte(0x48)
-	reading = bus.read_byte(0x48)
+	try:
+		bus.write_byte(0x48, channel)
+		# discard first value - it's the previous reading
+		bus.read_byte(0x48)
+		reading = bus.read_byte(0x48)
+
+	except:
+		reading = -1
 
 	return reading
 
@@ -145,11 +160,18 @@ def readPCFlight():
 
 
 def readHMC5883L():
-	data = mag.getHeading()
-	reading = {}
-	reading['yaw'] = "%.0f" % data['z']
-	reading['pitch'] = "%.0f" % data['y']
-	reading['roll'] = "%.0f" % data['x']
+	try:
+		data = mag.getHeading()
+		reading = {}
+		reading['yaw'] = "%.0f" % data['z']
+		reading['pitch'] = "%.0f" % data['y']
+		reading['roll'] = "%.0f" % data['x']
+
+	except:
+		reading = {}
+		reading['yaw'] = -1
+		reading['pitch'] = -1
+		reading['roll'] = -1
 
 	return reading
 
@@ -158,128 +180,139 @@ def readMPU6050():
 
 	# get expected DMP packet size for later comparison
 	packetSize = mpu.dmpGetFIFOPacketSize()
-	
-	while True:
-		# Get INT_STATUS byte
-		mpuIntStatus = mpu.getIntStatus()
-	
-		if mpuIntStatus >= 2: # check for DMP data ready interrupt (this should happen frequently)
-			# get current FIFO count
-			fifoCount = mpu.getFIFOCount()
-	
-			# check for overflow (this should never happen unless our code is too inefficient)
-			if fifoCount == 1024:
-				# reset so we can continue cleanly
-				mpu.resetFIFO()
-				#print('FIFO overflow!')
-	
-	
-			# wait for correct available data length, should be a VERY short wait
-			fifoCount = mpu.getFIFOCount()
-			while fifoCount < packetSize:
-				fifoCount = mpu.getFIFOCount()
-	
-			result = mpu.getFIFOBytes(packetSize)
-			q = mpu.dmpGetQuaternion(result)
-			g = mpu.dmpGetGravity(q)
-			ypr = mpu.dmpGetYawPitchRoll(q, g)
 
-			reading = {}
-			reading['yaw'] = "%.2f" % (ypr['yaw'] * 180 / math.pi)
-			reading['pitch'] = "%.2f" % (ypr['pitch'] * 180 / math.pi)
-			reading['roll'] = "%.2f" % (ypr['roll'] * 180 / math.pi)
+	try:
+		while True:
+			# Get INT_STATUS byte
+			mpuIntStatus = mpu.getIntStatus()
+		
+			if mpuIntStatus >= 2: # check for DMP data ready interrupt (this should happen frequently)
+				# get current FIFO count
+				fifoCount = mpu.getFIFOCount()
+		
+				# check for overflow (this should never happen unless our code is too inefficient)
+				if fifoCount == 1024:
+					# reset so we can continue cleanly
+					mpu.resetFIFO()
+					#print('FIFO overflow!')
+		
+		
+				# wait for correct available data length, should be a VERY short wait
+				fifoCount = mpu.getFIFOCount()
+				while fifoCount < packetSize:
+					fifoCount = mpu.getFIFOCount()
+		
+				result = mpu.getFIFOBytes(packetSize)
+				q = mpu.dmpGetQuaternion(result)
+				g = mpu.dmpGetGravity(q)
+				ypr = mpu.dmpGetYawPitchRoll(q, g)
 	
-			# track FIFO count here in case there is > 1 packet available
-			# (this lets us immediately read more without waiting for an interrupt)
-			fifoCount -= packetSize
-			# break when you have a reading
-			return reading
+				reading = {}
+				reading['yaw'] = "%.2f" % (ypr['yaw'] * 180 / math.pi)
+				reading['pitch'] = "%.2f" % (ypr['pitch'] * 180 / math.pi)
+				reading['roll'] = "%.2f" % (ypr['roll'] * 180 / math.pi)
+		
+				# track FIFO count here in case there is > 1 packet available
+				# (this lets us immediately read more without waiting for an interrupt)
+				fifoCount -= packetSize
+				# break when you have a reading
+				return reading
+	except:
+		reading = {}
+		reading['yaw'] = -1
+		reading['pitch'] = -1
+		reading['roll'] = -1
+
+		return reading
+		
 
 def read_ultrasonic():
-	number_of_readings=3
-	number_of_samples=5
-	ping_timeout=200000
-	debug = False
-
-	# Timing constants
-	us_trigger_pulse = 0.00001
-	us_read_sleep = 0.00002
-
-	all_readings = []
-	for j in range(number_of_readings):
-
-	        reading_list = []
-		readings_used = 0
-	        for i in range(number_of_samples):
-			# 50 ms is the max timeout if nothing in range.
-	               	# time.sleep(0.005)
-			timeout_flag = False
-
-	                # set our trigger high, triggering a pulse to be sent.
-	                GPIO.output(us_trigger_pin, GPIO.HIGH)
-	                time.sleep(us_trigger_pulse)
-	                GPIO.output(us_trigger_pin, GPIO.LOW)
-
-			timeout_start = datetime.now()
-
-			# Wait for our pin to go high, waiting for a response.
-	                while not GPIO.input(us_echo_pin):
-				timeout_end = datetime.now()
-				timeout_delta = timeout_end - timeout_start
-				if timeout_delta.microseconds > ping_timeout:
-					if debug:
-						print "Timeout A"
-					timeout_flag = True
-					break
-	                        pass
-
-			# Now its high, get our start time
-			timeout_start = datetime.now()
-	                start = datetime.now()
+	try:
+		number_of_readings=5
+		number_of_samples=10
+		ping_timeout=200000
+		debug = False
 	
-			# wait for our input to go low
-	                while GPIO.input(us_echo_pin):
-				timeout_end = datetime.now()
-				timeout_delta = timeout_end - timeout_start
-				if timeout_delta.microseconds > ping_timeout:
+		# Timing constants
+		us_trigger_pulse = 0.00001
+		us_read_sleep = 0.00002
+	
+		all_readings = []
+		for j in range(number_of_readings):
+	
+		        reading_list = []
+			readings_used = 0
+		        for i in range(number_of_samples):
+				# 50 ms is the max timeout if nothing in range.
+		               	# time.sleep(0.005)
+				timeout_flag = False
+	
+		                # set our trigger high, triggering a pulse to be sent.
+		                GPIO.output(us_trigger_pin, GPIO.HIGH)
+		                time.sleep(us_trigger_pulse)
+		                GPIO.output(us_trigger_pin, GPIO.LOW)
+	
+				timeout_start = datetime.now()
+	
+				# Wait for our pin to go high, waiting for a response.
+		                while not GPIO.input(us_echo_pin):
+					timeout_end = datetime.now()
+					timeout_delta = timeout_end - timeout_start
+					if timeout_delta.microseconds > ping_timeout:
+						if debug:
+							print "Timeout A"
+						timeout_flag = True
+						break
+		                        pass
+	
+				# Now its high, get our start time
+				timeout_start = datetime.now()
+		                start = datetime.now()
+		
+				# wait for our input to go low
+		                while GPIO.input(us_echo_pin):
+					timeout_end = datetime.now()
+					timeout_delta = timeout_end - timeout_start
+					if timeout_delta.microseconds > ping_timeout:
+						if debug:
+							print "Timeout B"
+						timeout_flag = True
+						break
+		                        pass
+	
+		                # Now its low, grab our end time
+		                end = datetime.now()
+	
+		                # Store our delta.
+				if not timeout_flag:
+		                	delta = end - start
+		   			reading_list.append(delta.microseconds)
+					readings_used = readings_used + 1
+	
 					if debug:
-						print "Timeout B"
-					timeout_flag = True
-					break
-	                        pass
+						print "Microseconds %1.f" % delta.microseconds
+	
+		                # take a little break, it appears to help stabalise readings
+		                # I suspect due to less interference with previous readings
+		                time.sleep(us_read_sleep)
+	
+		        average_reading = sum(reading_list)/len(reading_list)
+	
+		        all_readings.append(average_reading)
+	
+		average_of_all_readings = sum(all_readings)/len(all_readings)
+		average_distance=average_of_all_readings * 340
+		average_distance=average_distance/20000
+		return_text = "%s cm" % average_distance
 
-	                # Now its low, grab our end time
-	                end = datetime.now()
-
-	                # Store our delta.
-			if not timeout_flag:
-	                	delta = end - start
-	   			reading_list.append(delta.microseconds)
-				readings_used = readings_used + 1
-
-				if debug:
-					print "Microseconds %1.f" % delta.microseconds
-
-	                # take a little break, it appears to help stabalise readings
-	                # I suspect due to less interference with previous readings
-	                time.sleep(us_read_sleep)
-
-	        average_reading = sum(reading_list)/len(reading_list)
-
-	        all_readings.append(average_reading)
-
-	average_of_all_readings = sum(all_readings)/len(all_readings)
-	average_distance=average_of_all_readings * 340
-	average_distance=average_distance/20000
-	return_text = "%s cm" % average_distance
-
+	except:
+		return_text = "No reading"
+	
 	return return_text
 
 
 
 def get_coords():
-	"""Return (latitude, longitude, utc, altitude)"""
-
 	try:
 		lat = gpsd.fix.latitude
 		lon = gpsd.fix.longitude
@@ -295,6 +328,8 @@ def get_coords():
 
 		if (math.isnan(speed)):
 			speed = "No satellite fix"
+		else:
+			speed = "%s m/s" % speed
 
 		if (utc):
 			pass
@@ -306,7 +341,9 @@ def get_coords():
 		else:
 			alt = "%s metres" % alt
 
-		coords = [lat, lon, utc, alt, speed]
+		sats = gpsd.satellites
+
+		coords = [lat, lon, utc, alt, speed, sats]
 
 	except (KeyboardInterrupt, SystemExit):
 		pass
@@ -353,8 +390,6 @@ def lcdMessage(top, bottom):
 		print top
 		print bottom
 
-	LCD.clear()
-	LCD.message('\n')
 	msg = str(top) + "\n" + str(bottom)
 	LCD.message(msg)
 
@@ -424,13 +459,18 @@ if __name__ == '__main__':
 
 	# Set to 0 for normal operation, set to other number to skip to that on boot
 	operation = 0
+	last_operation = -1
 
 	while True:
 		now = datetime.now()
 		curTime = str(now.hour) + ':' + str(now.minute) + ':' + str(now.second)
 
-
 		try:
+			if operation != last_operation:
+				LCD=MHHD44780.HD44780()
+				LCD.clear()
+				last_operation = operation
+
 			if operation == 0:
 				hostname=readHostname()
 				for addr in readIPaddresses():
@@ -440,21 +480,16 @@ if __name__ == '__main__':
 			elif operation == 1:
 				coords = get_coords()
 				sqlData = coords
+				sqlData.pop(5)
 				sqlData.append(0)
 				sqlData.append(sessionID)
 
 				cursor.execute("INSERT INTO gpslog (lat, lon, datetime, alt, speed, uploaded, session_id) VALUES (?,?,?,?,?,?,?);", sqlData)
 				conn.commit()
 
-				lcdMessage("Latitude", coords[0])
+				lcdMessage("Lat %s" % coords[0], "Lng %s" % coords[1])
 				time.sleep(2)
-				lcdMessage("Longitude", coords[1])
-				time.sleep(2)
-				lcdMessage("UTC", coords[2])
-				time.sleep(2)
-				lcdMessage("Altitude", coords[3])
-				time.sleep(2)
-				lcdMessage("Speed", coords[4])
+				lcdMessage("Alt %s" % coords[3], "Speed %s" % coords[4])
 				time.sleep(2)
 	
 			elif operation == 2:
@@ -466,12 +501,14 @@ if __name__ == '__main__':
 				time.sleep(0.2)
 	
 			elif operation == 4:
-				lcdMessage("Humidity*", readHumidity())
-				time.sleep(0.2)
+				hum = readHumidity()
+				lcdMessage("Humidity", hum)
+				time.sleep(2)
 	
 			elif operation == 5:
-				lcdMessage("Light*", readPCFlight())
+				lcdMessage("Light", readPCFlight())
 				time.sleep(0.2)
+
 			elif operation == 6:
 				lcdMessage("Vibration", readVibration())
 				time.sleep(0.25)
@@ -502,8 +539,12 @@ if __name__ == '__main__':
 				lcdMessage("Temperature", readTemperature())
 				time.sleep(0.2)
 
+			#operation = operation + 1
+
 		except KeyboardInterrupt:
 			gpsp.running = False
 			gpsp.join()
 			GPIO.cleanup()
 
+		except:
+			pass
