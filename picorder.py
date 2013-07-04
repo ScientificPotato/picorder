@@ -228,7 +228,7 @@ def readMPU6050():
 
 def read_ultrasonic():
 	try:
-		number_of_readings=5
+		number_of_readings=10
 		number_of_samples=10
 		ping_timeout=200000
 		debug = False
