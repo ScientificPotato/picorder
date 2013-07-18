@@ -1,0 +1,1603 @@
+gpsd: no process found
+Picorder version 3
+Michael Horne - July 2013
+Using RPi.GPIO version 0.5.2a
+--------------------
+####################
+Picorder v3         
+Starting up...      
+####################
+--------------------
+--------------------
+####################
+Picorder v3         
+20130718070625      
+####################
+--------------------
+--------------------
+####################
+Picorder v3         
+Initialising GPS    
+####################
+--------------------
+--------------------
+Hostname:           
+picorder            
+IP addresses        
+ 127.0.0.1          
+--------------------
+--------------------
+Hostname:           
+picorder            
+IP addresses        
+ 192.168.1.90       
+--------------------
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 59.01          
+Pitch: -12.83       
+Roll: -0.31         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.30 C
+Pressure: 1020.20 hPa
+Altitude: -57.21 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 59.68          
+Pitch: -18.00       
+Roll: -3.27         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.30 C
+Pressure: 1020.14 hPa
+Altitude: -57.46 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 95.25          
+Pitch: -30.94       
+Roll: -27.70        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.14 hPa
+Altitude: -57.95 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 43.77          
+Pitch: -24.05       
+Roll: 15.74         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.14 hPa
+Altitude: -57.21 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 43.52          
+Pitch: -20.81       
+Roll: 17.26         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.20 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 28.41          
+Pitch: -3.35        
+Roll: -48.78        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.26 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 28.10          
+Pitch: -3.89        
+Roll: -50.43        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.17 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 28.08          
+Pitch: -1.81        
+Roll: -53.33        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.23 hPa
+Altitude: -57.46 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 28.59          
+Pitch: -2.00        
+Roll: -52.00        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.17 hPa
+Altitude: -57.04 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 28.81          
+Pitch: -1.03        
+Roll: -53.30        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.10 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 43.20          
+Pitch: 15.14        
+Roll: -46.30        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.40 C
+Pressure: 1020.12 hPa
+Altitude: -56.38 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 77.13          
+Pitch: -23.70       
+Roll: -11.99        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.50 C
+Pressure: 1020.18 hPa
+Altitude: -56.88 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 72.49          
+Pitch: -31.47       
+Roll: -4.14         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.50 C
+Pressure: 1020.24 hPa
+Altitude: -57.54 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 79.24          
+Pitch: -19.27       
+Roll: -47.43        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.50 C
+Pressure: 1020.24 hPa
+Altitude: -56.63 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 47.74          
+Pitch: -9.93        
+Roll: -76.34        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.50 C
+Pressure: 1020.21 hPa
+Altitude: -57.29 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 45.03          
+Pitch: -41.15       
+Roll: -23.66        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.50 C
+Pressure: 1020.21 hPa
+Altitude: -58.53 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 68.17          
+Pitch: -71.11       
+Roll: 11.78         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.21 hPa
+Altitude: -57.79 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 53.47          
+Pitch: -29.84       
+Roll: -5.09         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.24 hPa
+Altitude: -58.28 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 56.01          
+Pitch: -19.09       
+Roll: -10.97        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.24 hPa
+Altitude: -57.54 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 57.44          
+Pitch: -19.17       
+Roll: -11.16        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.24 hPa
+Altitude: -58.28 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 60.44          
+Pitch: -19.02       
+Roll: -13.27        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.18 hPa
+Altitude: -58.28 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 96.92          
+Pitch: -25.63       
+Roll: -7.35         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.60 C
+Pressure: 1020.15 hPa
+Altitude: -57.79 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 83.67          
+Pitch: -17.16       
+Roll: 3.43          
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.70 C
+Pressure: 1020.19 hPa
+Altitude: -58.03 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.65          
+Pitch: -12.43       
+Roll: 4.67          
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.70 C
+Pressure: 1020.16 hPa
+Altitude: -57.87 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.95          
+Pitch: -12.71       
+Roll: 4.50          
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.70 C
+Pressure: 1020.25 hPa
+Altitude: -58.53 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -174.85        
+Pitch: 23.46        
+Roll: 2.62          
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.70 C
+Pressure: 1020.19 hPa
+Altitude: -57.62 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 77.51          
+Pitch: -15.45       
+Roll: 3.06          
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.80 C
+Pressure: 1020.16 hPa
+Altitude: -57.62 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 83.10          
+Pitch: -5.76        
+Roll: -0.39         
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.80 C
+Pressure: 1020.16 hPa
+Altitude: -57.37 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 77.65          
+Pitch: -14.38       
+Roll: -14.59        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.80 C
+Pressure: 1020.16 hPa
+Altitude: -57.37 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 78.85          
+Pitch: -14.50       
+Roll: -14.40        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.80 C
+Pressure: 1020.25 hPa
+Altitude: -57.62 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 78.98          
+Pitch: -14.40       
+Roll: -14.70        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.80 C
+Pressure: 1020.09 hPa
+Altitude: -58.61 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 79.81          
+Pitch: -14.40       
+Roll: -14.81        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.90 C
+Pressure: 1020.25 hPa
+Altitude: -57.87 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.58          
+Pitch: -13.96       
+Roll: -16.90        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.90 C
+Pressure: 1020.17 hPa
+Altitude: -58.37 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.75          
+Pitch: -13.86       
+Roll: -17.54        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 27.90 C
+Pressure: 1020.23 hPa
+Altitude: -58.45 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.78          
+Pitch: -13.85       
+Roll: -17.55        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.00 C
+Pressure: 1020.37 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.85          
+Pitch: -13.85       
+Roll: -17.56        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.00 C
+Pressure: 1020.14 hPa
+Altitude: -57.95 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.85          
+Pitch: -13.87       
+Roll: -17.57        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.00 C
+Pressure: 1020.14 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.81          
+Pitch: -13.83       
+Roll: -17.61        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.00 C
+Pressure: 1020.17 hPa
+Altitude: -58.45 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.76          
+Pitch: -13.85       
+Roll: -17.62        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.10 C
+Pressure: 1020.26 hPa
+Altitude: -57.21 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.78          
+Pitch: -13.85       
+Roll: -17.61        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.10 C
+Pressure: 1020.23 hPa
+Altitude: -57.46 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.78          
+Pitch: -13.86       
+Roll: -17.59        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.10 C
+Pressure: 1020.23 hPa
+Altitude: -57.70 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.82          
+Pitch: -13.87       
+Roll: -17.59        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.10 C
+Pressure: 1020.12 hPa
+Altitude: -57.54 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.87          
+Pitch: -13.87       
+Roll: -17.54        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.10 C
+Pressure: 1020.21 hPa
+Altitude: -57.79 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.94          
+Pitch: -13.86       
+Roll: -17.52        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.20 C
+Pressure: 1020.27 hPa
+Altitude: -58.78 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.98          
+Pitch: -13.86       
+Roll: -17.57        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.20 C
+Pressure: 1020.24 hPa
+Altitude: -57.79 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.99          
+Pitch: -13.83       
+Roll: -17.59        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.20 C
+Pressure: 1020.30 hPa
+Altitude: -58.03 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.03          
+Pitch: -13.86       
+Roll: -17.56        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.30 C
+Pressure: 1020.18 hPa
+Altitude: -57.54 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.00          
+Pitch: -13.87       
+Roll: -17.59        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.30 C
+Pressure: 1020.21 hPa
+Altitude: -57.79 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.01          
+Pitch: -13.86       
+Roll: -17.56        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.30 C
+Pressure: 1020.18 hPa
+Altitude: -57.29 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.02          
+Pitch: -13.86       
+Roll: -17.55        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.30 C
+Pressure: 1020.21 hPa
+Altitude: -58.03 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.06          
+Pitch: -13.86       
+Roll: -17.55        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.30 C
+Pressure: 1020.25 hPa
+Altitude: -57.37 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.12          
+Pitch: -13.84       
+Roll: -17.53        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.40 C
+Pressure: 1020.25 hPa
+Altitude: -58.61 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 81.10          
+Pitch: -13.85       
+Roll: -17.58        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.40 C
+Pressure: 1020.19 hPa
+Altitude: -58.12 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latitude No satellite fix
+Longitude No satellite fix
+Altitude No reading 
+Speed No satellite fix
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: -64            
+Pitch: 97           
+Roll: -60           
+--------------------
+Next operation
+--------------------
+HMC accelerometer   
+Yaw: 80.82          
+Pitch: -14.25       
+Roll: -18.17        
+--------------------
+Next operation
+--------------------
+Barometer           
+Temperature: 28.40 C
+Pressure: 1020.16 hPa
+Altitude: -57.12 m  
+--------------------
+Next operation
+Next operation
+--------------------
+Latit

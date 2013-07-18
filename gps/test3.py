@@ -7,10 +7,11 @@ from gps import *
 from time import *
 import time
 import threading
- 
+
 gpsd = None # setting the global variable
  
 os.system('clear') #clear the terminal (optional)
+print "If gpsd is not running you will get an error" 
  
 class GpsPoller(threading.Thread):
   def __init__(self):

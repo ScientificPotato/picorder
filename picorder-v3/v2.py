@@ -458,7 +458,7 @@ if __name__ == '__main__':
 	print 'Session ', sessionID
 
 	# Set to 0 for normal operation, set to other number to skip to that on boot
-	operation = 1
+	operation = 8
 	last_operation = -1
 
 	while True:
