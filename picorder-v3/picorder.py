@@ -364,7 +364,7 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
 def readSoundLevel():
         reading = readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
 
-        print reading
+#        print reading
 
         perc_of_max = float(reading / 255) * 100
         number_of_bars = float((16/100)) * perc_of_max
@@ -388,9 +388,29 @@ def readHumidity():
         return raw
 
 
+###############################################################
+# Read MQ7
+def readMQ7():
+	reading = readadc(PIN_MQ7, SPICLK, SPIMOSI, SPIMISO, SPICS)
 
+	return str(reading)
 
+###############################################################
+# Read MQ2
+def readMQ2():
+	reading = readadc(PIN_MQ2, SPICLK, SPIMOSI, SPIMISO, SPICS)
 
+	return str(reading)
+
+###############################################################
+# Read Moisture
+def readMoisture():
+	reading = readadc(PIN_MOISTURE, SPICLK, SPIMOSI, SPIMISO, SPICS)
+
+	return str(reading)
+
+###############################################################
+###############################################################
 ###############################################################
 # SYS
 def iterateOperation(channel):
@@ -474,8 +494,11 @@ PIN_SWITCH = 24
 GPIO.setup(PIN_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Sound
-PIN_MICR = 0
-PIN_HUMD = 4
+PIN_MICR = 1
+PIN_HUMD = 0
+PIN_MQ7 = 2
+PIN_MQ2 = 3
+PIN_MOISTURE = 7
 
 
 
@@ -504,7 +527,21 @@ if ENABLE_GPS:
 ###############################################################
 # MAIN
 
+
 if __name__ == "__main__":
+#	while True:
+#		reading = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS)
+#		print reading
+#		reading = readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS)
+#		print reading
+#		reading = readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS)
+#		print reading
+#		reading = readadc(3, SPICLK, SPIMOSI, SPIMISO, SPICS)
+#		print reading
+#		reading = readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS)
+#		print reading
+#	exit(0)
+
 	operation = 0
 	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=iterateOperation)
 
@@ -530,13 +567,13 @@ if __name__ == "__main__":
 				time.sleep(0.5)
 
 			elif operation == 3:
-				ypr = readHMC5883L()
-				display("HMC accelerometer", "Yaw: " + ypr['yaw'], "Pitch: " + ypr['pitch'], "Roll: " + ypr['roll'])
+				mq7 = readMQ7()
+				display("MQ7 sensor", "Carbon monoxide", mq7, "")
 				time.sleep(0.5)
 
 			elif operation == 4:
 				ypr = readMPU6050()
-				display("HMC accelerometer", "Yaw: " + ypr['yaw'], "Pitch: " + ypr['pitch'], "Roll: " + ypr['roll'])
+				display("MPU accelerometer", "Yaw: " + ypr['yaw'], "Pitch: " + ypr['pitch'], "Roll: " + ypr['roll'])
 				time.sleep(0.5)
 
 			elif operation == 5:
@@ -552,10 +589,22 @@ if __name__ == "__main__":
 			elif operation == 7:
 				level = readSoundLevel()
 				display("Microphone", "Sound level", level)
+				time.sleep(0.5)
 
 			elif operation == 8:
 				level = readHumidity()
 				display("Humidity", "Not calibd", level)
+				time.sleep(0.5)
+
+			elif operation == 9:
+				mq2 = readMQ2()
+				display("MQ2 sensor", "Combustible gas", mq2, "")
+				time.sleep(0.5)
+
+			elif operation == 10:
+				reading = readMoisture()
+				display("Moisture", reading, "", "")
+				time.sleep(0.5)
 
 			else:
 				operation = 0
