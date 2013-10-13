@@ -1,26 +1,23 @@
 #!/usr/bin/python
 
+from __future__ import division
 import RPi.GPIO as GPIO
 from PyComms import hmc5883l
 from PyComms import mpu6050
+import TMP102
 import lcddriver
 import math
 import commands
 import os
 import time
 import threading
+import commands
 from smbus import SMBus
 from datetime import datetime
 from gps import *
 from Adafruit_BMP085 import BMP085
 
-
-
-
-
-
-
-
+LCD_ENABLED=1
 
 
 ###############################################################
@@ -32,10 +29,11 @@ def display(line_1, line_2="                    ", line_3="                    "
 	line_3 = line_3.ljust(20, " ")
 	line_4 = line_4.ljust(20, " ")
 
-	lcd.lcd_display_string(line_1, 1)
-	lcd.lcd_display_string(line_2, 2)
-	lcd.lcd_display_string(line_3, 3)
-	lcd.lcd_display_string(line_4, 4)
+	if LCD_ENABLED:
+		lcd.lcd_display_string(line_1, 1)
+		lcd.lcd_display_string(line_2, 2)
+		lcd.lcd_display_string(line_3, 3)
+		lcd.lcd_display_string(line_4, 4)
 
 	if DEBUG == 1:
 		print "--------------------"
@@ -156,6 +154,12 @@ class GpsPoller(threading.Thread):
 
 
 
+###############################################################
+# TMP102
+def readTemperature():
+	reading = tmp102.readTemperature()
+	str_temp = "%.2f C" % reading
+	return str_temp
 
 
 
@@ -195,23 +199,23 @@ def readCoordinates():
                 alt = gpsd.fix.altitude
 
                 if (math.isnan(lat)):
-                        lat = "No satellite fix"
+                        lat = "No fix"
 
                 if (math.isnan(lon)):
-                        lon = "No satellite fix"
+                        lon = "No fix"
 
                 if (math.isnan(speed)):
-                        speed = "No satellite fix"
+                        speed = "No fix"
                 else:
                         speed = "%s m/s" % speed
 
                 if (utc):
                         pass
                 else:
-                        utc = "No satellite fix"
+                        utc = "No fix"
 
                 if (math.isnan(alt)):
-                        alt = "No reading"
+                        alt = "No fix"
                 else:
                         alt = "%s metres" % alt
 
@@ -357,59 +361,63 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
 
         return adcout
 
+###############################################################
+# Convert A2D readings
+def readAnalogSensor(PIN):
+	try:
+		reading = readadc(PIN, SPICLK, SPIMOSI, SPIMISO, SPICS)
+		perc_of_max = round((reading/1023)*100, 2)
+		percentage = str(perc_of_max) + "%"
 
+		number_of_bars = (reading/1023)*16
+		number_of_bars = int(math.ceil(number_of_bars))
+		bars = "#" * number_of_bars
+
+	except:
+		percentage = "No reading"
+		bars = ""
+
+	return [percentage, bars]
 
 ###############################################################
 # MICROPHONE/SOUND LEVEL
 def readSoundLevel():
-        reading = readadc(PIN_MICR, SPICLK, SPIMOSI, SPIMISO, SPICS)
-
-#        print reading
-
-        perc_of_max = float(reading / 255) * 100
-        number_of_bars = float((16/100)) * perc_of_max
-        number_of_bars = int(math.ceil(number_of_bars))
-        #print 'Bars %s' % number_of_bars
-
-        output = '#' * number_of_bars
-
-        return output
-
-
+	return readAnalogSensor(PIN_MICR)
 
 
 ###############################################################
 # Read Humidity
 def readHumidity():
-        raw = readadc(PIN_HUMD, SPICLK, SPIMOSI, SPIMISO, SPICS)
-
-	raw = str(raw)
-
-        return raw
+	return readAnalogSensor(PIN_HUMD)
 
 
 ###############################################################
 # Read MQ7
 def readMQ7():
-	reading = readadc(PIN_MQ7, SPICLK, SPIMOSI, SPIMISO, SPICS)
-
-	return str(reading)
+	return readAnalogSensor(PIN_MQ7)
 
 ###############################################################
 # Read MQ2
 def readMQ2():
-	reading = readadc(PIN_MQ2, SPICLK, SPIMOSI, SPIMISO, SPICS)
-
-	return str(reading)
+	return readAnalogSensor(PIN_MQ2)
 
 ###############################################################
 # Read Moisture
 def readMoisture():
-	reading = readadc(PIN_MOISTURE, SPICLK, SPIMOSI, SPIMISO, SPICS)
-
-	return str(reading)
+	return readAnalogSensor(PIN_MOISTURE)
 
 ###############################################################
+# Read system temperatures
+def readSystemTemperatures():
+	try:
+		reading = commands.getoutput("./getSystemTemperature.sh")
+		readings = reading.splitlines();
+
+	except:
+		readings = [-1, -1]
+
+	return readings
+
 ###############################################################
 ###############################################################
 # SYS
@@ -428,17 +436,77 @@ def iterateOperation(channel):
 			print "Next operation"
 
 
+import os
+import sys
+import termios
+import tty
 
+def getKey():
+	fd = sys.stdin.fileno()
+	old = termios.tcgetattr(fd)
+	new = termios.tcgetattr(fd)
+	new[3] = new[3] & ~termios.ICANON & ~termios.ECHO
+	new[6][termios.VMIN] = 1
+	new[6][termios.VTIME] = 0
+	termios.tcsetattr(fd, termios.TCSANOW, new)
+	key = None
+	try:
+		key = os.read(fd, 3)
+	finally:
+		termios.tcsetattr(fd, termios.TCSAFLUSH, old)
+	return key
+
+key_press = "^"
+def readKey():
+	global key_press
+	lock = threading.Lock()
+	while True:
+		with lock:
+			key_press = str(getKey())
+			if key_press != '^':
+				iterateOperation(1)
+
+###############################################################
+# TWITTER
+def sendTweet(message):
+	try:
+		twitter_api.PostUpdate(message)
+	except:
+		pass
+
+def readLastTweet():
+	try:
+		twitter_statuses = twitter_api.GetUserTimeline('picorder')
+		last_status = twitter_statuses[0].text
+	except:
+		last_status = "Check connection"
+
+	return last_status
 
 ###############################################################
 # INIT SECTION
 DEBUG=1
+
+# TWITTER SET-UP
+import twitter
+CONSUMER_KEY = '4dg3D0FRULTUMCWyUytmsg'
+CONSUMER_SECRET = 'yqgk7hqpBxkQwJzvtUnK2E0rDPLqI5JSuv54qsA8'
+ACCESS_KEY = '1911720504-8audXV5cs0Wt2cmFaKmAyPbytSc3vFnonpOd9Tg'
+ACCESS_SECRET = 'T1yNOP1ZAeI0MGriTB8ERBDYDhrfJxorRZeqUWV3q10'
+try:
+	twitter_api = twitter.Api(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET, access_token_key=ACCESS_KEY, access_token_secret=ACCESS_SECRET)
+except:
+	pass
+
+###############################################################
 print "Picorder version 3"
 print "Michael Horne - July 2013"
 print "Using RPi.GPIO version " + GPIO.VERSION
 
 time_stamp = time.time()
 session_id = currentSession()
+
+sendTweet("Picorder Activated " + str(time_stamp))
 
 # GPIO
 GPIO.setmode(GPIO.BCM)
@@ -494,12 +562,14 @@ PIN_SWITCH = 24
 GPIO.setup(PIN_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Sound
-PIN_MICR = 1
 PIN_HUMD = 0
+PIN_MICR = 1
 PIN_MQ7 = 2
 PIN_MQ2 = 3
 PIN_MOISTURE = 7
 
+# TMP102 temperature sensor
+tmp102 = TMP102.TMP102(0x48)
 
 
 #############################################################
@@ -522,31 +592,26 @@ if ENABLE_GPS:
 	gpsp.start()
 
 
-
-
 ###############################################################
 # MAIN
 
 
 if __name__ == "__main__":
-#	while True:
-#		reading = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS)
-#		print reading
-#		reading = readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS)
-#		print reading
-#		reading = readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS)
-#		print reading
-#		reading = readadc(3, SPICLK, SPIMOSI, SPIMISO, SPICS)
-#		print reading
-#		reading = readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS)
-#		print reading
-#	exit(0)
+	RUN_TEST = 0
+	if RUN_TEST:
+		while True:
+			reading = readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS)
+			print "Channel 7"
+			print reading
+			time.sleep(0.5)
 
-	operation = 0
+	operation = 7
 	GPIO.add_event_detect(PIN_SWITCH, GPIO.RISING, callback=iterateOperation)
+	threading.Thread(target = readKey).start()
 
 	while True:
 		print "Current operation: " + str(operation)
+
 		try:
 			if operation == 0:
 				hostname = readHostname()
@@ -568,7 +633,7 @@ if __name__ == "__main__":
 
 			elif operation == 3:
 				mq7 = readMQ7()
-				display("MQ7 sensor", "Carbon monoxide", mq7, "")
+				display("MQ7 sensor", "Carbon monoxide", mq7[0], mq7[1])
 				time.sleep(0.5)
 
 			elif operation == 4:
@@ -587,24 +652,40 @@ if __name__ == "__main__":
 				time.sleep(0.5)
 
 			elif operation == 7:
-				level = readSoundLevel()
-				display("Microphone", "Sound level", level)
+				reading = readSoundLevel()
+				display("Microphone", "Sound level", reading[0], reading[1])
 				time.sleep(0.5)
 
 			elif operation == 8:
-				level = readHumidity()
-				display("Humidity", "Not calibd", level)
+				reading = readHumidity()
+				display("Humidity", reading[0], reading[1], "")
 				time.sleep(0.5)
 
 			elif operation == 9:
 				mq2 = readMQ2()
-				display("MQ2 sensor", "Combustible gas", mq2, "")
+				display("MQ2 sensor", "Combustible gas", mq2[0], mq2[1])
 				time.sleep(0.5)
 
 			elif operation == 10:
 				reading = readMoisture()
-				display("Moisture", reading, "", "")
+				display("Moisture", reading[0], reading[1], "")
 				time.sleep(0.5)
+
+			elif operation == 11:
+				reading = readTemperature()
+				display("Temperature", reading, "from", "TMP102 sensor")
+				time.sleep(0.5)
+
+			elif operation == 12:
+				readings = readSystemTemperatures()
+				display("System temperatures", readings[0], readings[1], "")
+				time.sleep(0.5)
+
+			elif operation == 13:
+				reading = readLastTweet()
+				display("Last tweet to @picorder", reading, "", "")
+				time.sleep(5)
+				iterateOperation(1)
 
 			else:
 				operation = 0
